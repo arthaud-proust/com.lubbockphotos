@@ -12,6 +12,14 @@ export default async function Page() {
         <h2>Bordeaux</h2>
       </header>
       <PhotoGallery photos={photos} />
+      <footer className='pt-40 pb-8 text-center'>
+        <p>
+          Created by{' '}
+          <a href='https://arthaudproust.fr' className='underline'>
+            Arthaud Proust
+          </a>
+        </p>
+      </footer>
     </>
   )
 }

@@ -27,7 +27,7 @@ type FlickrPhoto = {
   width_l: number
 }
 
-type Photo = {
+export type Photo = {
   id: string
   title: string
   thumbnail: PhotoSize

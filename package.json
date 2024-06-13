@@ -1,8 +1,8 @@
 {
-  "name": "react-three-next",
-  "version": "2.0.0",
+  "name": "lubbock-gallery",
+  "version": "0.0.0",
   "authors": [
-    "Renaud ROHLINGER <https://twitter.com/onirenaud>"
+    "Arthaud Proust <https://arthaudproust.fr>"
   ],
   "license": "MIT",
   "private": true,

@@ -5,14 +5,14 @@ export default async function Page() {
 
   return (
     <>
-      <header className='py-40 text-center'>
-        <h1 className='text-9xl'>Lubbock</h1>
+      <header className='py-48 md:py-40 text-center'>
+        <h1 className='text-6xl md:text-9xl'>Lubbock</h1>
         <h2>Bordeaux</h2>
       </header>
-      <main className='flex flex-wrap justify-center gap-4 p-4'>
+      <main className='flex flex-wrap justify-center gap-2 p-2 md:gap-4 md:p-4'>
         {photos.map((photo) => (
           <Image
-            className='inline-block h-24 w-auto'
+            className='inline-block h-12 md:h-24 w-auto'
             key={photo.id}
             src={photo.thumbnail.url}
             height={photo.thumbnail.height}

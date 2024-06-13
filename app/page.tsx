@@ -9,12 +9,12 @@ export default async function Page() {
     <>
       <header className='py-48 text-center md:py-40'>
         <h1 className='text-6xl md:text-9xl'>Lubbock</h1>
-        <h2>Bordeaux</h2>
+        <h2 className='mb-2 text-3xl md:text-3xl'>Bordeaux</h2>
       </header>
       <PhotoGallery photos={photos} />
-      <footer className='pt-40 pb-8 text-center'>
+      <footer className='pb-8 pt-40 text-center'>
         <p>
-          Created by{' '}
+          Created by
           <a href='https://arthaudproust.fr' className='underline'>
             Arthaud Proust
           </a>

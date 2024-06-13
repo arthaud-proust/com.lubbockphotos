@@ -8,8 +8,8 @@ export default async function Page() {
   return (
     <>
       <header className='py-48 text-center md:py-40'>
-        <h1 className='text-6xl md:text-9xl'>Lubbock</h1>
-        <h2 className='mb-2 text-3xl md:text-3xl'>Bordeaux</h2>
+        <h1 className='text-7xl md:text-9xl'>Lubbock</h1>
+        <h2 className='mb-2 text-2xl md:text-3xl'>Bordeaux</h2>
       </header>
       <PhotoGallery photos={photos} />
       <footer className='pb-8 pt-40 text-center'>

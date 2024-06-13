@@ -1,10 +1,10 @@
 // @ts-nocheck
-import * as THREE from 'three'
-import { extend, useFrame } from '@react-three/fiber'
+import fragment from '@/templates/Shader/glsl/shader.frag'
+import vertex from '@/templates/Shader/glsl/shader.vert'
 import { shaderMaterial } from '@react-three/drei'
-import vertex from './glsl/shader.vert'
-import fragment from './glsl/shader.frag'
+import { extend, useFrame } from '@react-three/fiber'
 import { forwardRef, useImperativeHandle, useRef } from 'react'
+import * as THREE from 'three'
 
 const ShaderImpl = shaderMaterial(
   {

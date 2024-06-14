@@ -14,7 +14,7 @@ export default async function Page() {
       <PhotoGallery photos={photos} />
       <footer className='pb-8 pt-40 text-center'>
         <p>
-          Created by
+          <span>Created by </span>
           <a href='https://arthaudproust.fr' className='underline'>
             Arthaud Proust
           </a>

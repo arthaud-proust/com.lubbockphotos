@@ -1,5 +1,5 @@
-import { PhotoGallery } from '@/PhotoGallery'
 import { getAllPhotos } from '@/clients/flickr'
+import { PhotoGallery } from '@/components/PhotoGallery'
 import 'photoswipe/dist/photoswipe.css'
 
 export default async function Page() {

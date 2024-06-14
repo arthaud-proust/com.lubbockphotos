@@ -1,13 +1,8 @@
+import { Photo } from '@/core/photoScene'
 import { createFlickr } from 'flickr-sdk'
 
 const { flickr } = createFlickr('97818967026878ef662304c74417044c')
 const LUBBOCK_FLICKR_USER_ID = '130002917@N03'
-
-type PhotoSize = {
-  url: string
-  height: number
-  width: number
-}
 
 type FlickrPhoto = {
   id: string
@@ -25,13 +20,6 @@ type FlickrPhoto = {
   url_l: string
   height_l: number
   width_l: number
-}
-
-export type Photo = {
-  id: string
-  title: string
-  thumbnail: PhotoSize
-  large: PhotoSize
 }
 
 export const getAllPhotos = async (): Promise<Array<Photo>> => {

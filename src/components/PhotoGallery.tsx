@@ -1,6 +1,6 @@
 'use client'
 
-import { Photo } from '@/clients/flickr'
+import { Photo } from '@/core/photoScene'
 import Image from 'next/image'
 import 'photoswipe/dist/photoswipe.css'
 

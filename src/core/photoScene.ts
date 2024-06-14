@@ -38,22 +38,42 @@ export const photoSceneSize = (photo: Photo): PhotoSceneSize => {
   }
 }
 
+const spiralPoint = (index: number) => {
+  const startAt = 2
+  const a = 0
+  const grow = 1
+  const pointsDistance = 3
+
+  const theta = Math.sqrt((2 * Math.PI * (startAt + index) * pointsDistance) / grow)
+  const r = a + grow * theta
+
+  return {
+    polar: {
+      theta,
+      r,
+    },
+    cartesian: toCartesian(theta, r),
+  }
+}
+
+const toCartesian = (theta: number, r: number) => ({
+  x: r * Math.cos(theta),
+  y: r * Math.sin(theta),
+})
+
 export const photoScene = (photo: Photo, index: number): PhotoScene => {
-  const distance = 20
-  const angle = 0.1 * index
-  const x = (distance + angle) * Math.cos(angle)
-  const z = (distance + angle) * Math.sin(angle)
+  const { cartesian, polar } = spiralPoint(index)
 
   return {
     photo,
     position: {
-      x,
+      x: cartesian.x,
       y: 0,
-      z,
+      z: cartesian.y,
     },
     rotation: {
       x: 0,
-      y: -angle,
+      y: Math.PI / 2 - polar.theta,
       z: 0,
     },
     size: photoSceneSize(photo),

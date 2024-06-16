@@ -12,13 +12,15 @@ import {
 import { Canvas, GroupProps, extend, useFrame } from '@react-three/fiber'
 import { easing, geometry } from 'maath'
 import { PropsWithChildren, Suspense, useLayoutEffect, useRef, useState } from 'react'
+import { suspend } from 'suspend-react'
 import * as THREE from 'three'
 
 extend(geometry)
+const inter = import('@pmndrs/assets/fonts/inter_regular.woff') as any
 
 export const Gallery = ({ photoSets }: { photoSets: Array<PhotoSet> }) => (
   <Canvas dpr={[1, 1.5]}>
-    <ScrollControls horizontal pages={8} infinite>
+    <ScrollControls horizontal pages={6} infinite>
       <Scene position={[0, 1.5, -8]} photoSets={photoSets} />
     </ScrollControls>
   </Canvas>
@@ -32,7 +34,7 @@ function Scene({ children, photoSets, ...props }: PropsWithChildren<{ photoSets:
   useFrame((state, delta) => {
     if (ref.current) ref.current.rotation.y = -scroll.offset * (Math.PI * 2) // Rotate contents
     state.events.update() // Raycasts every frame rather than on pointer-move
-    easing.damp3(state.camera.position, [-state.pointer.x * 2, 10, 11], 0.3, delta)
+    easing.damp3(state.camera.position, [-state.pointer.x * 2, state.pointer.y * 2 + 6.5, 11], 0.3, delta)
     state.camera.lookAt(0, 0, 0)
   })
 
@@ -98,14 +100,14 @@ function Cards({
   const amount = photos.length
   const anglePerPhoto = len / amount
   const textAngle = from + 0.5 * len
-  const textDistance = 1.11
+  const textDistance = 1.08
 
   return (
     <group {...props}>
       <Billboard
-        position={[Math.sin(textAngle) * radius * textDistance, 0.5, Math.cos(textAngle) * radius * textDistance]}
+        position={[Math.sin(textAngle) * radius * textDistance, -0.5, Math.cos(textAngle) * radius * textDistance]}
       >
-        <Text fontSize={0.18} anchorX='center' color='black'>
+        <Text font={(suspend(inter) as any).light} fontSize={0.11} anchorX='center' color='black'>
           {category}
         </Text>
       </Billboard>
@@ -155,7 +157,7 @@ function Card({
         ref={ref}
         transparent
         radius={0.075}
-        rotation={[Math.PI / 8, 0, 0]}
+        rotation={[0, Math.PI / 4, 0]}
         url={photo.small.url}
         scale={[ratio, 1]}
         side={THREE.DoubleSide}
@@ -173,7 +175,7 @@ function ActiveCard({ photo, ...props }: { photo: Photo | undefined } & Billboar
 
   useLayoutEffect(() => {
     if (ref.current) {
-      ref.current.material.zoom = 0.95
+      ref.current.material.zoom = 0.9
     }
   }, [photo])
   useFrame((state, delta) => {
@@ -181,17 +183,23 @@ function ActiveCard({ photo, ...props }: { photo: Photo | undefined } & Billboar
       return
     }
     easing.damp(ref.current.material, 'zoom', 1, 0.5, delta)
-    easing.damp(ref.current.material, 'opacity', photo ? 1 : 0, 0.3, delta)
+    easing.damp(ref.current.material, 'opacity', !!photo ? 1 : 0, delta)
   })
 
   const size = 15,
     scale: [number, number] = [size, size],
-    position: [number, number, number] = [0, -2, 0]
+    position: [number, number, number] = [0, 0, 0]
 
   return (
     photo && (
       <Billboard {...props}>
-        <Text fontSize={0.5} position={[0, -size / 2 + position[1] - 0.5, 0]} anchorX='center' color='black'>
+        <Text
+          font={(suspend(inter) as any).default}
+          fontSize={0.7}
+          position={[size / 2 + position[0] + 1, size / 2 + position[1] - 1, 0]}
+          anchorX='left'
+          color='black'
+        >
           {photo.title}
         </Text>
         <Suspense

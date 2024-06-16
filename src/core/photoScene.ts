@@ -7,7 +7,8 @@ export type PhotoSize = {
 export type Photo = {
   id: string
   title: string
-  thumbnail: PhotoSize
+  small: PhotoSize
+  medium: PhotoSize
   large: PhotoSize
 }
 

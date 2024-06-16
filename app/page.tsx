@@ -1,9 +1,9 @@
-import { getAllPhotos } from '@/clients/flickr'
+import { getPhotos } from '@/clients/flickr'
 import { PhotoGallery } from '@/components/PhotoGallery'
 import 'photoswipe/dist/photoswipe.css'
 
 export default async function Page() {
-  const photos = await getAllPhotos()
+  const photos = await getPhotos({ count: 500 })
 
   return (
     <>

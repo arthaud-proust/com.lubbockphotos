@@ -16,7 +16,7 @@ export function PhotoGallery({ photos }: { photos: Array<Photo> }) {
             original={photo.large.url}
             height={photo.large.height}
             width={photo.large.width}
-            thumbnail={photo.thumbnail.url}
+            thumbnail={photo.small.url}
           >
             {({ ref, open }) => (
               <Image
@@ -24,9 +24,9 @@ export function PhotoGallery({ photos }: { photos: Array<Photo> }) {
                 alt=''
                 ref={ref}
                 onClick={open}
-                src={photo.thumbnail.url}
-                height={photo.thumbnail.height}
-                width={photo.thumbnail.width}
+                src={photo.small.url}
+                height={photo.small.height}
+                width={photo.small.width}
               />
             )}
           </Item>

@@ -14,37 +14,47 @@ type FlickrPhoto = {
   ispublic: boolean
   isfriend: boolean
   isfamily: boolean
-  url_m: string
-  height_m: number
-  width_m: number
+  url_s: string
+  height_s: number
+  width_s: number
+  url_z: string
+  height_z: number
+  width_z: number
   url_l: string
   height_l: number
   width_l: number
 }
 
-export const getAllPhotos = async (): Promise<Array<Photo>> => {
+const toPhoto = (photo: FlickrPhoto) => ({
+  id: photo.id,
+  title: photo.title,
+  small: {
+    url: photo.url_s,
+    height: photo.height_s,
+    width: photo.width_s,
+  },
+  medium: {
+    url: photo.url_z,
+    height: photo.height_z,
+    width: photo.width_z,
+  },
+  large: {
+    url: photo.url_l,
+    height: photo.height_l,
+    width: photo.width_l,
+  },
+})
+
+export const getPhotos = async ({ count = 500 }: { count: number }): Promise<Array<Photo>> => {
   const allFlickrPhotos = (
     await flickr('flickr.people.getPhotos', {
       user_id: LUBBOCK_FLICKR_USER_ID,
       content_types: '0',
       privacy_filter: '1',
-      extras: 'url_m, url_l',
-      per_page: '500',
+      extras: 'url_s, url_z, url_l',
+      per_page: `${count}`,
     })
   ).photos.photo as Array<FlickrPhoto>
 
-  return allFlickrPhotos.map((photo) => ({
-    id: photo.id,
-    title: photo.title,
-    thumbnail: {
-      url: photo.url_m,
-      height: photo.height_m,
-      width: photo.width_m,
-    },
-    large: {
-      url: photo.url_l,
-      height: photo.height_l,
-      width: photo.width_l,
-    },
-  }))
+  return allFlickrPhotos.map(toPhoto)
 }

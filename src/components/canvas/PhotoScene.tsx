@@ -1,30 +1,39 @@
 'use client'
 
 import { PhotoScene } from '@/core/photoScene'
-import { useMemo } from 'react'
-import { Euler, TextureLoader, Vector3, DoubleSide } from 'three'
+import { useHelper } from '@react-three/drei'
+import { useMemo, useRef } from 'react'
+import * as THEE from 'three'
 
-const Texture = ({ texture }) => {
+const Image3D = ({ url, ref }: { url: string; ref: any }) => {
+  const texture = useMemo(() => new THEE.TextureLoader().load(url), [url])
   return (
-    <mesh>
+    <mesh ref={ref}>
       <planeGeometry attach='geometry' args={[5, 4]} />
-      <meshBasicMaterial side={DoubleSide} attach='material' map={texture} />
+      <meshBasicMaterial side={THEE.DoubleSide} attach='material' map={texture} />
     </mesh>
   )
 }
-const Image3D = ({ url }: { url: string }) => {
-  const texture = useMemo(() => new TextureLoader().load(url), [url])
-  return <Texture texture={texture} />
-}
 
 export const PhotoSceneComponent = ({ scene }: { scene: PhotoScene }) => {
-  const position = new Vector3(scene.position.x, scene.position.y, scene.position.z)
-  const rotation = new Euler(scene.rotation.x, scene.rotation.y, scene.rotation.z)
+  const position = new THEE.Vector3(scene.position.x, scene.position.y, scene.position.z)
+  const rotation = new THEE.Euler(scene.rotation.x, scene.rotation.y, scene.rotation.z)
 
+  const light = useRef()
+  const image = useRef()
+
+  useHelper(light, THEE.SpotLightHelper)
   return (
     <group position={position} rotation={rotation}>
-      <Image3D url={scene.photo.thumbnail.url} />
-      <pointLight position={[20, 30, 10]} intensity={3} decay={0.2} />
+      <Image3D url={scene.photo.small.url} ref={image} />
+      <spotLight
+        ref={light}
+        position={[0, 4, -4]}
+        target={image.current}
+        angle={Math.PI / 10}
+        intensity={3}
+        decay={0.2}
+      />
       <pointLight position={[-10, -10, -10]} color='blue' decay={0.2} />
     </group>
   )

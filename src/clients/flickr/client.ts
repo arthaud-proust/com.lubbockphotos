@@ -5,7 +5,7 @@ import { FlickrPhoto, FlickrPhotoSet } from './types'
 
 const { flickr } = createFlickr('97818967026878ef662304c74417044c')
 
-const getPhotos = async ({ count = 500 }: { count: number }): Promise<Array<Photo>> => {
+const getPhotos = async ({ count = 500 }: { count?: number }): Promise<Array<Photo>> => {
   const flickrPhotos = (
     await flickr('flickr.people.getPhotos', {
       user_id: process.env.FLICKR_USER_ID,
@@ -24,7 +24,7 @@ const getPhotoSetPhotos = async ({
   count = 500,
 }: {
   photoSetId: string
-  count: number
+  count?: number
 }): Promise<Array<Photo>> => {
   const flickrPhotos = (
     await flickr('flickr.photosets.getPhotos', {
@@ -40,7 +40,15 @@ const getPhotoSetPhotos = async ({
   return flickrPhotos.map(toPhoto)
 }
 
-const getPhotoSets = async ({ count = 500 }: { count: number }): Promise<Array<PhotoSet>> => {
+const getPhotoSets = async ({
+  count = 20,
+  countPerPhotoSet = 10,
+  minPhotosPerPhotoset = 3,
+}: {
+  count?: number
+  countPerPhotoSet?: number
+  minPhotosPerPhotoset?: number
+}): Promise<Array<PhotoSet>> => {
   const flickrGalleries = (
     await flickr('flickr.photosets.getList', {
       user_id: process.env.FLICKR_USER_ID,
@@ -51,11 +59,12 @@ const getPhotoSets = async ({ count = 500 }: { count: number }): Promise<Array<P
   const photoSets = flickrGalleries.map(toPhotoSet)
 
   const fetchPhotoSetPhotoTasks = photoSets.map(
-    async (photoSet) => (photoSet.photos = await getPhotoSetPhotos({ photoSetId: photoSet.id, count: 10 })),
+    async (photoSet) =>
+      (photoSet.photos = await getPhotoSetPhotos({ photoSetId: photoSet.id, count: countPerPhotoSet })),
   )
   await Promise.all(fetchPhotoSetPhotoTasks)
 
-  return photoSets.filter((photoSet) => photoSet.photos.length >= 3)
+  return photoSets.filter((photoSet) => photoSet.photos.length >= minPhotosPerPhotoset)
 }
 
 export { getPhotoSetPhotos, getPhotoSets, getPhotos }

@@ -18,8 +18,8 @@ extend(geometry)
 
 export const Gallery = ({ photoSets }: { photoSets: Array<PhotoSet> }) => (
   <Canvas dpr={[1, 1.5]}>
-    <ScrollControls pages={4} infinite>
-      <Scene position={[0, 1.5, -7.5]} photoSets={photoSets} />
+    <ScrollControls horizontal pages={8} infinite>
+      <Scene position={[0, 1.5, -8]} photoSets={photoSets} />
     </ScrollControls>
   </Canvas>
 )
@@ -36,7 +36,7 @@ function Scene({ children, photoSets, ...props }: PropsWithChildren<{ photoSets:
     state.camera.lookAt(0, 0, 0)
   })
 
-  const gapBetweenGroups = 4
+  const gapBetweenGroups = 2
 
   const groups = photoSets.reduce((groups: Array<{ start: number; len: number; end: number }>, set, index) => {
     const len = set.photos.length
@@ -155,7 +155,7 @@ function Card({
         ref={ref}
         transparent
         radius={0.075}
-        rotation={[0, 0, 0]}
+        rotation={[Math.PI / 8, 0, 0]}
         url={photo.small.url}
         scale={[ratio, 1]}
         side={THREE.DoubleSide}

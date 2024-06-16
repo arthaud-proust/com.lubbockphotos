@@ -156,7 +156,7 @@ function Card({
       <DreiImage
         ref={ref}
         transparent
-        radius={0.075}
+        // radius={0.075}
         rotation={[0, Math.PI / 4, 0]}
         url={photo.small.url}
         scale={[ratio, 1]}
@@ -188,14 +188,15 @@ function ActiveCard({ photo, ...props }: { photo: Photo | undefined } & Billboar
 
   const size = 15,
     scale: [number, number] = [size, size],
-    position: [number, number, number] = [0, 0, 0]
+    position: [number, number, number] = [0, 0, 0],
+    radius = 0
 
   return (
     photo && (
       <Billboard {...props}>
         <Text
           font={(suspend(inter) as any).default}
-          fontSize={0.7}
+          fontSize={0.5}
           position={[size / 2 + position[0] + 1, size / 2 + position[1] - 1, 0]}
           anchorX='left'
           color='black'
@@ -205,11 +206,18 @@ function ActiveCard({ photo, ...props }: { photo: Photo | undefined } & Billboar
         <Suspense
           fallback={
             <Suspense fallback={<LoadingImage size={scale} position={position} />}>
-              <DreiImage ref={ref} transparent radius={0.3} position={position} scale={scale} url={photo.small.url} />
+              <DreiImage
+                ref={ref}
+                transparent
+                radius={radius}
+                position={position}
+                scale={scale}
+                url={photo.small.url}
+              />
             </Suspense>
           }
         >
-          <DreiImage ref={ref} transparent radius={0.3} position={position} scale={scale} url={photo.medium.url} />
+          <DreiImage ref={ref} transparent radius={radius} position={position} scale={scale} url={photo.medium.url} />
         </Suspense>
       </Billboard>
     )

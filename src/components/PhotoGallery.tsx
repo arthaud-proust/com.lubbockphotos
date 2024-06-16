@@ -17,6 +17,7 @@ export function PhotoGallery({ photos }: { photos: Array<Photo> }) {
             height={photo.large.height}
             width={photo.large.width}
             thumbnail={photo.small.url}
+            caption={photo.title}
           >
             {({ ref, open }) => (
               <Image

@@ -1,6 +1,6 @@
 'use client'
 
-import { PhotoScene } from '@/core/photoScene'
+import { PhotoScene } from '@/core/types'
 import { useHelper } from '@react-three/drei'
 import { useMemo, useRef } from 'react'
 import * as THEE from 'three'

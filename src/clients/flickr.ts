@@ -1,54 +1,14 @@
-import { Photo } from '@/core/photoScene'
+import { Photo, PhotoSet } from '@/core/types'
 import { createFlickr } from 'flickr-sdk'
+import { toPhoto, toPhotoSet } from './converters'
+import { FlickrPhoto, FlickrPhotoSet } from './types'
 
 const { flickr } = createFlickr('97818967026878ef662304c74417044c')
-const LUBBOCK_FLICKR_USER_ID = '130002917@N03'
-
-type FlickrPhoto = {
-  id: string
-  owner: string
-  secret: string
-  server: string
-  farm: number
-  title: string
-  ispublic: boolean
-  isfriend: boolean
-  isfamily: boolean
-  url_s: string
-  height_s: number
-  width_s: number
-  url_z: string
-  height_z: number
-  width_z: number
-  url_l: string
-  height_l: number
-  width_l: number
-}
-
-const toPhoto = (photo: FlickrPhoto) => ({
-  id: photo.id,
-  title: photo.title,
-  small: {
-    url: photo.url_s,
-    height: photo.height_s,
-    width: photo.width_s,
-  },
-  medium: {
-    url: photo.url_z,
-    height: photo.height_z,
-    width: photo.width_z,
-  },
-  large: {
-    url: photo.url_l,
-    height: photo.height_l,
-    width: photo.width_l,
-  },
-})
 
 export const getPhotos = async ({ count = 500 }: { count: number }): Promise<Array<Photo>> => {
-  const allFlickrPhotos = (
+  const flickrPhotos = (
     await flickr('flickr.people.getPhotos', {
-      user_id: LUBBOCK_FLICKR_USER_ID,
+      user_id: process.env.FLICKR_USER_ID,
       content_types: '0',
       privacy_filter: '1',
       extras: 'url_s, url_z, url_l',
@@ -56,5 +16,44 @@ export const getPhotos = async ({ count = 500 }: { count: number }): Promise<Arr
     })
   ).photos.photo as Array<FlickrPhoto>
 
-  return allFlickrPhotos.map(toPhoto)
+  return flickrPhotos.map(toPhoto)
+}
+
+export const getPhotoSetPhotos = async ({
+  photoSetId,
+  count = 500,
+}: {
+  photoSetId: string
+  count: number
+}): Promise<Array<Photo>> => {
+  const flickrPhotos = (
+    await flickr('flickr.photosets.getPhotos', {
+      user_id: process.env.FLICKR_USER_ID,
+      photoset_id: photoSetId,
+      privacy_filter: '1',
+      extras: 'url_s, url_z, url_l',
+      per_page: `${count}`,
+      media: 'photos',
+    })
+  ).photoset.photo as Array<FlickrPhoto>
+
+  return flickrPhotos.map(toPhoto)
+}
+
+export const getPhotoSets = async ({ count = 500 }: { count: number }): Promise<Array<PhotoSet>> => {
+  const flickrGalleries = (
+    await flickr('flickr.photosets.getList', {
+      user_id: process.env.FLICKR_USER_ID,
+      per_page: `${count}`,
+    })
+  ).photosets.photoset as Array<FlickrPhotoSet>
+
+  const photoSets = flickrGalleries.map(toPhotoSet)
+
+  const fetchPhotoSetPhotoTasks = photoSets.map(
+    async (photoSet) => (photoSet.photos = await getPhotoSetPhotos({ photoSetId: photoSet.id, count: 10 })),
+  )
+  await Promise.all(fetchPhotoSetPhotoTasks)
+
+  return photoSets.filter((photoSet) => photoSet.photos.length > 1)
 }

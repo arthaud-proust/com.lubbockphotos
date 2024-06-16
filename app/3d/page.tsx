@@ -1,15 +1,14 @@
-import { getPhotos } from '@/clients/flickr'
+import { getPhotoSets } from '@/clients/flickr'
 import { Gallery } from '@/components/canvas/Gallery'
-import { makePhotoScenes } from '@/core/photoScene'
 
 export default async function Page() {
-  const photos = await getPhotos({ count: 100 })
+  const photoSets = await getPhotoSets({ count: 500 })
 
-  const photoScenes = makePhotoScenes(photos)
+  console.log(photoSets)
 
   return (
     <>
-      <Gallery photoScenes={photoScenes} />
+      <Gallery photoSets={photoSets} />
     </>
   )
 }

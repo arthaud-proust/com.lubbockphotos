@@ -1,6 +1,6 @@
 'use client'
 
-import { Photo } from '@/core/photoScene'
+import { Photo } from '@/core/types'
 import Image from 'next/image'
 import 'photoswipe/dist/photoswipe.css'
 

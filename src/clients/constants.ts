@@ -1,0 +1,1 @@
+export const LUBBOCK_FLICKR_USER_ID = '130002917@N03'

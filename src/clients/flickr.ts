@@ -55,5 +55,5 @@ export const getPhotoSets = async ({ count = 500 }: { count: number }): Promise<
   )
   await Promise.all(fetchPhotoSetPhotoTasks)
 
-  return photoSets.filter((photoSet) => photoSet.photos.length > 1)
+  return photoSets.filter((photoSet) => photoSet.photos.length >= 3)
 }

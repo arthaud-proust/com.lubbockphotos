@@ -19,7 +19,7 @@ extend(geometry)
 export const Gallery = ({ photoSets }: { photoSets: Array<PhotoSet> }) => (
   <Canvas dpr={[1, 1.5]}>
     <ScrollControls pages={4} infinite>
-      <Scene position={[0, 1.5, -7]} photoSets={photoSets} />
+      <Scene position={[0, 1.5, -7.5]} photoSets={photoSets} />
     </ScrollControls>
   </Canvas>
 )
@@ -36,17 +36,25 @@ function Scene({ children, photoSets, ...props }: PropsWithChildren<{ photoSets:
     state.camera.lookAt(0, 0, 0)
   })
 
-  const gapBetweenGroups = 2
+  const gapBetweenGroups = 4
+
   const groups = photoSets.reduce((groups: Array<{ start: number; len: number; end: number }>, set, index) => {
-    const len = set.photos.length - 1
-    const start = index === 0 ? 0 : groups[index - 1].start + len + gapBetweenGroups
+    const len = set.photos.length
+    if (index === 0) {
+      const start = gapBetweenGroups
+      const end = start + len
+
+      return [...groups, { start, len, end }]
+    }
+
+    const lastGroup = groups[index - 1]
+    const start = lastGroup.end + gapBetweenGroups
     const end = start + len
 
     return [...groups, { start, len, end }]
   }, [])
 
   const total = groups[groups.length - 1].end
-
   const pointToRadian = (point: number) => (Math.PI * 2 * point) / total
 
   const startOfGroup = (index: number) => pointToRadian(groups[index].start)
@@ -88,18 +96,22 @@ function Cards({
 } & GroupProps) {
   const [hovered, hover] = useState(null)
   const amount = photos.length
-  const textPosition = from + (amount / 2 / amount) * len
+  const anglePerPhoto = len / amount
+  const textAngle = from + 0.5 * len
+  const textDistance = 1.11
 
   return (
     <group {...props}>
-      <Billboard position={[Math.sin(textPosition) * radius * 1.4, 0.5, Math.cos(textPosition) * radius * 1.4]}>
-        <Text fontSize={0.25} anchorX='center' color='black'>
+      <Billboard
+        position={[Math.sin(textAngle) * radius * textDistance, 0.5, Math.cos(textAngle) * radius * textDistance]}
+      >
+        <Text fontSize={0.18} anchorX='center' color='black'>
           {category}
         </Text>
       </Billboard>
 
       {Array.from({ length: amount }, (_, i) => {
-        const angle = from + (i / amount) * len
+        const angle = from + anglePerPhoto * i
         return (
           <Card
             key={angle}
@@ -143,7 +155,7 @@ function Card({
         ref={ref}
         transparent
         radius={0.075}
-        rotation={[Math.PI / 8, 0, 0]}
+        rotation={[0, 0, 0]}
         url={photo.small.url}
         scale={[ratio, 1]}
         side={THREE.DoubleSide}
@@ -172,7 +184,7 @@ function ActiveCard({ photo, ...props }: { photo: Photo | undefined } & Billboar
     easing.damp(ref.current.material, 'opacity', photo ? 1 : 0, 0.3, delta)
   })
 
-  const size = 17,
+  const size = 15,
     scale: [number, number] = [size, size],
     position: [number, number, number] = [0, -2, 0]
 

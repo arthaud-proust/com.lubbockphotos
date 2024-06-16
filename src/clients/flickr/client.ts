@@ -5,7 +5,7 @@ import { FlickrPhoto, FlickrPhotoSet } from './types'
 
 const { flickr } = createFlickr('97818967026878ef662304c74417044c')
 
-export const getPhotos = async ({ count = 500 }: { count: number }): Promise<Array<Photo>> => {
+const getPhotos = async ({ count = 500 }: { count: number }): Promise<Array<Photo>> => {
   const flickrPhotos = (
     await flickr('flickr.people.getPhotos', {
       user_id: process.env.FLICKR_USER_ID,
@@ -19,7 +19,7 @@ export const getPhotos = async ({ count = 500 }: { count: number }): Promise<Arr
   return flickrPhotos.map(toPhoto)
 }
 
-export const getPhotoSetPhotos = async ({
+const getPhotoSetPhotos = async ({
   photoSetId,
   count = 500,
 }: {
@@ -40,7 +40,7 @@ export const getPhotoSetPhotos = async ({
   return flickrPhotos.map(toPhoto)
 }
 
-export const getPhotoSets = async ({ count = 500 }: { count: number }): Promise<Array<PhotoSet>> => {
+const getPhotoSets = async ({ count = 500 }: { count: number }): Promise<Array<PhotoSet>> => {
   const flickrGalleries = (
     await flickr('flickr.photosets.getList', {
       user_id: process.env.FLICKR_USER_ID,
@@ -57,3 +57,5 @@ export const getPhotoSets = async ({ count = 500 }: { count: number }): Promise<
 
   return photoSets.filter((photoSet) => photoSet.photos.length >= 3)
 }
+
+export { getPhotoSetPhotos, getPhotoSets, getPhotos }

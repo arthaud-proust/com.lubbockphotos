@@ -1,4 +1,4 @@
-import { getPhotos } from '@/clients/flickr'
+import { getPhotos } from '@/clients/flickr/client'
 import { PhotoGallery } from '@/components/PhotoGallery'
 import 'photoswipe/dist/photoswipe.css'
 

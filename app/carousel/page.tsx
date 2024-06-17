@@ -7,13 +7,18 @@ export default async function Page() {
 
   return (
     <>
-      <h1 className='fixed left-8 top-8 z-50 flex flex-col p-4 text-sm'>
-        <span className='ml-8'>Lubbock</span>
-        <span>Bordeaux</span>
-      </h1>
-      <Link className='fixed right-8 top-8 z-50 p-4 text-sm decoration-2 underline-offset-2 hover:underline' href='/'>
-        Accueil
-      </Link>
+      <div className='fixed left-4 top-8 z-50 w-20 text-sm md:left-8'>
+        <Link className='flex items-center gap-2 underline-offset-2 hover:underline' href='/'>
+          Lubbock
+        </Link>
+        <h1 className='flex items-center gap-2'>
+          <span className='block h-px w-full bg-black'></span>
+          Carousel
+        </h1>
+        <Link className='flex items-center gap-2 underline-offset-2 hover:underline' href='/grid'>
+          Grid
+        </Link>
+      </div>
       <Gallery photoSets={photoSets} />
     </>
   )

@@ -8,7 +8,7 @@ import { Gallery, Item } from 'react-photoswipe-gallery'
 
 export function PhotoGallery({ photos }: { photos: Array<Photo> }) {
   return (
-    <main className='flex flex-wrap justify-center gap-2 p-2 md:gap-4 md:p-4'>
+    <main className='flex flex-wrap justify-start gap-2 md:gap-4'>
       <Gallery>
         {photos.map((photo) => (
           <Item

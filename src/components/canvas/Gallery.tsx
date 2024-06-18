@@ -56,7 +56,7 @@ export const Gallery = ({ photoSets }: { photoSets: Array<PhotoSet> }) => {
   }))
 
   return (
-    <Canvas dpr={[1, 1.5]}>
+    <Canvas className='!fixed left-0 top-0' dpr={[1, 1.5]}>
       <ScrollControls horizontal pages={6} infinite>
         <Scene position={[0, 1, -8]} carouselGroups={carouselGroups} />
       </ScrollControls>

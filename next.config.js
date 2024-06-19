@@ -18,6 +18,7 @@ const nextConfig = {
   // },
   reactStrictMode: true, // Recommended for the `pages` directory, default in `app`.
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',

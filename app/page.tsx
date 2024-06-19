@@ -1,6 +1,6 @@
 export default async function Page() {
   return (
-    <div className='mt-auto max-w-md gap-20 pb-10 text-sm'>
+    <div className='text-body mt-auto max-w-md gap-20 pb-10'>
       <h2 className='font-bold'>About</h2>
       <p className='mt-2'>Lubbock is an amateur black and white street photographer based in Bordeaux.</p>
       <p className='mt-2'>Photography has been his passion since 1998.</p>

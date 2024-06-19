@@ -17,3 +17,9 @@
     overflow: hidden;
   }
 }
+
+@layer components {
+  .text-body {
+    font-size: clamp(1rem, 0.5vw, 3rem);
+  }
+}

@@ -1,4 +1,4 @@
-import { Layout } from '@/components/dom/Layout'
+import { Layout } from '@/components/Layout'
 import '@/global.css'
 import { seo } from '@/seo'
 
@@ -16,7 +16,6 @@ export default function RootLayout({ children }) {
       */}
       <head />
       <body>
-        {/* To avoid FOUT with styled-components wrap Layout with StyledComponentsRegistry https://beta.nextjs.org/docs/styling/css-in-js#styled-components */}
         <Layout>{children}</Layout>
       </body>
     </html>

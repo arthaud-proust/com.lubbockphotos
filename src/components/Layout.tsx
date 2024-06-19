@@ -19,7 +19,7 @@ const Layout = ({ children }) => {
   return (
     <div ref={ref} className='relative size-full touch-auto overflow-auto'>
       <main className='flex min-h-screen items-start gap-4 px-4 pt-8 md:gap-8 md:px-8'>
-        <nav className='sticky top-8 z-50 w-20 shrink-0 text-sm'>
+        <nav className='text-body sticky top-8 z-50 w-24 shrink-0'>
           {links.map((link, index) => (
             <Link
               key={index}
@@ -27,7 +27,7 @@ const Layout = ({ children }) => {
               className='group flex items-center underline-offset-2 hover:underline'
               href={link.href}
             >
-              <span className='block h-px w-0 bg-black transition-all duration-100 group-aria-disabled:w-full'></span>
+              <span className='block h-px w-0 bg-black transition-all duration-100 group-aria-disabled:w-5'></span>
               <span className='block h-px w-0 transition-all duration-100 group-aria-disabled:w-2'></span>
               {link.label}
             </Link>

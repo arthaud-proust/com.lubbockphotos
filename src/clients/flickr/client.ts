@@ -40,15 +40,28 @@ const getPhotoSetPhotos = async ({
   return flickrPhotos.map(toPhoto)
 }
 
+const getPhotoSetDetails = async ({ photoSetId }: { photoSetId: string }): Promise<PhotoSet> => {
+  const flickrPhotoset = (
+    await flickr('flickr.photosets.getInfo', {
+      user_id: process.env.FLICKR_USER_ID,
+      photoset_id: photoSetId,
+    })
+  ).photoset as FlickrPhotoSet
+
+  return toPhotoSet(flickrPhotoset)
+}
+
 const getPhotoSets = async ({
   count = 20,
   countPerPhotoSet = 10,
-  minPhotosPerPhotoset = 3,
+  minPhotosPerPhotoset,
 }: {
   count?: number
   countPerPhotoSet?: number
   minPhotosPerPhotoset?: number
 }): Promise<Array<PhotoSet>> => {
+  minPhotosPerPhotoset ??= Math.min(countPerPhotoSet, 3)
+
   const flickrGalleries = (
     await flickr('flickr.photosets.getList', {
       user_id: process.env.FLICKR_USER_ID,
@@ -67,4 +80,4 @@ const getPhotoSets = async ({
   return photoSets.filter((photoSet) => photoSet.photos.length >= minPhotosPerPhotoset)
 }
 
-export { getPhotoSetPhotos, getPhotoSets, getPhotos }
+export { getPhotos, getPhotoSetDetails, getPhotoSetPhotos, getPhotoSets }

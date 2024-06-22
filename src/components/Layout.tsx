@@ -14,6 +14,7 @@ const Layout = ({ children }) => {
     { label: 'Lubbock', href: '/' },
     { label: 'Carousel', href: '/carousel' },
     { label: 'Grid', href: '/grid' },
+    { label: 'Gallery', href: '/gallery' },
   ]
 
   return (
@@ -23,7 +24,7 @@ const Layout = ({ children }) => {
           {links.map((link, index) => (
             <Link
               key={index}
-              aria-disabled={pathname === link.href}
+              aria-disabled={link.href === '/' ? pathname === link.href : pathname.startsWith(link.href)}
               className='group flex items-center underline-offset-2 hover:underline'
               href={link.href}
             >

@@ -24,8 +24,8 @@ type CarouselGroup = {
   len: number
 }
 
-export const Gallery = ({ photoSets }: { photoSets: Array<PhotoSet> }) => {
-  const gapBetweenGroups = 2
+export const Carousel = ({ photoSets }: { photoSets: Array<PhotoSet> }) => {
+  const gapBetweenGroups = 1
 
   const groups = photoSets.reduce((groups: Array<{ start: number; len: number; end: number }>, set, index) => {
     const len = set.photos.length
@@ -69,23 +69,24 @@ function Scene({
   carouselGroups,
   ...props
 }: PropsWithChildren<{ carouselGroups: Array<CarouselGroup> } & GroupProps>) {
+  const ref = useRef<THREE.Group<THREE.Object3DEventMap>>()
+  const [isActiveHovered, setIsActiveHovered] = useState(false)
+
   const radius = 15
 
-  const ref = useRef<THREE.Group<THREE.Object3DEventMap>>()
   const scroll = useScroll()
   const [activePhoto, setActivePhoto] = useState<Photo | null>(null)
   const [hoveredPhoto, setHoveredPhoto] = useState<Photo | null>(null)
   const raycaster = useMemo(
     () => new THREE.Raycaster(new THREE.Vector3(0, 1, radius * 0.25), new THREE.Vector3(0, 0, 1).normalize()),
-    [],
+    [radius],
   )
 
   useFrame((state, delta) => {
     if (ref.current) ref.current.rotation.y = -scroll.offset * (Math.PI * 2) // Rotate contents
     state.events.update() // Raycasts every frame rather than on pointer-move
-    easing.damp3(state.camera.position, [-state.pointer.x * 2, state.pointer.y * 1.5 + 5, 11.5], 0.3, delta)
-    state.camera.lookAt(0, 0, 0)
-
+    easing.damp3(state.camera.position, [-state.pointer.x * 2, state.pointer.y * 1.5 + 5.5, 11.5], 0.3, delta)
+    state.camera.lookAt(0, 1, 0)
     setActivePhoto(hoveredPhoto ?? raycaster.intersectObject(ref.current)[0]?.object.userData.photo ?? null)
   })
 
@@ -99,10 +100,15 @@ function Scene({
           len={carouselGroup.len}
           radius={radius}
           photos={carouselGroup.photoSet.photos}
+          isActiveHovered={isActiveHovered}
           onHoverCard={(photo: Photo | null) => setHoveredPhoto(photo)}
         />
       ))}
-      {activePhoto ? <ActiveCard photo={activePhoto} /> : null}
+      <ActiveCard
+        photo={activePhoto}
+        isHovered={isActiveHovered}
+        onClick={() => setIsActiveHovered(!isActiveHovered)}
+      />
     </group>
   )
 }
@@ -113,6 +119,7 @@ function Cards({
   from,
   len,
   radius,
+  isActiveHovered,
   onHoverCard,
   ...props
 }: {
@@ -121,6 +128,7 @@ function Cards({
   from: number
   len: number
   radius: number
+  isActiveHovered: boolean
   onHoverCard: (index: Photo | null) => void
 } & GroupProps) {
   const [hovered, hover] = useState(null)
@@ -134,7 +142,7 @@ function Cards({
       <Billboard
         position={[Math.sin(textAngle) * radius * textDistance, -0.5, Math.cos(textAngle) * radius * textDistance]}
       >
-        <Text font={(suspend(inter) as any).light} fontSize={0.11} anchorX='center' color='black'>
+        <Text font={(suspend(inter) as any).light} fontSize={0.13} anchorX='center' color='black'>
           {category}
         </Text>
       </Billboard>
@@ -150,6 +158,7 @@ function Cards({
             rotation={[0, Math.PI / 2 + angle, 0]}
             active={hovered !== null}
             hovered={hovered === i}
+            isActiveHovered={isActiveHovered}
             photo={photo}
           />
         )
@@ -162,20 +171,25 @@ function Card({
   photo,
   active,
   hovered,
+  isActiveHovered,
   ...props
 }: {
   photo: Photo
   active: boolean
   hovered: boolean
+  isActiveHovered: boolean
 } & GroupProps) {
-  const ref = useRef<any>()
+  const ref = useRef<THREE.Mesh>()
 
   const ratio = 1
 
   useFrame((_, delta) => {
-    const f = hovered ? 1.4 : active ? 1.25 : 1
-    easing.damp3(ref.current.position, [0, hovered ? 0.25 : 0, 0], 0.1, delta)
-    easing.damp3(ref.current.scale, [ratio * f, 1 * f, 1], 0.15, delta)
+    const activeHoveredYFactor = isActiveHovered ? 0.5 : 1
+    const y = activeHoveredYFactor * (hovered ? 0.25 : 0)
+    easing.damp3(ref.current.position, [0, y, 0], 0.1, delta)
+
+    const scale = isActiveHovered ? 0.5 : hovered ? 1.4 : active ? 1.25 : 1
+    easing.damp3(ref.current.scale, [ratio * scale, scale, 1], 0.15, delta)
   })
 
   return (
@@ -197,48 +211,77 @@ function LoadingImage({ size, position }: { size: [number, number]; position: [n
   return <Plane args={size} position={position} />
 }
 
-function ActiveCard({ photo, ...props }: { photo: Photo | undefined } & BillboardProps) {
+function ActiveCard({
+  photo,
+  isHovered,
+  onClick,
+  ...props
+}: {
+  photo: Photo | undefined
+  isHovered: boolean
+  onClick: () => void
+} & BillboardProps) {
+  return (
+    <Billboard {...props} onClick={onClick}>
+      {photo && <ActiveCardImage photo={photo} isHovered={isHovered}></ActiveCardImage>}
+    </Billboard>
+  )
+}
+
+function ActiveCardImage({ photo, isHovered }: { photo: Photo | undefined; isHovered: boolean }) {
   const ref = useRef<any>()
 
+  const squaredBase = 15
+  const squaredScale: [number, number] = [squaredBase, squaredBase]
+
+  const originalBase = 18
+  const scaledWidth = (originalBase * photo.large.width) / photo.large.height
+  const boundedWidth = Math.min(28, scaledWidth)
+  const originalScale: [number, number] = [boundedWidth, originalBase]
+
+  const scale = isHovered ? originalScale : squaredScale
+  const position: [number, number, number] = [0, 0, 0]
+
   useLayoutEffect(() => {
-    if (ref.current) {
+    if (ref.current && !isHovered) {
       ref.current.material.zoom = 0.9
     }
-  }, [photo])
+  }, [photo, isHovered])
   useFrame((_, delta) => {
     if (!ref.current) {
       return
     }
+
     easing.damp(ref.current.material, 'zoom', 1, 0.5, delta)
-    easing.damp(ref.current.material, 'opacity', !!photo ? 1 : 0, delta)
+    easing.damp(ref.current.material, 'opacity', photo ? 1 : 0, delta)
   })
 
-  const size = 15,
-    scale: [number, number] = [size, size],
-    position: [number, number, number] = [0, 0, 0]
-
   return (
-    photo && (
-      <Billboard {...props}>
-        <Text
-          font={(suspend(inter) as any).default}
-          fontSize={0.5}
-          position={[size / 2 + position[0] + 1, size / 2 + position[1] - 1, 0]}
-          anchorX='left'
-          color='black'
-        >
-          {photo.title}
-        </Text>
-        <Suspense
-          fallback={
-            <Suspense fallback={<LoadingImage size={scale} position={position} />}>
-              <DreiImage ref={ref} transparent position={position} scale={scale} url={photo.small.url} />
-            </Suspense>
-          }
-        >
-          <DreiImage ref={ref} transparent position={position} scale={scale} url={photo.medium.url} />
-        </Suspense>
-      </Billboard>
-    )
+    <>
+      <Text
+        font={(suspend(inter) as any).default}
+        fontSize={0.5}
+        position={[scale[0] / 2 + position[0] + 1, scale[1] / 2 + position[1] - 1, 0]}
+        anchorX='left'
+        color='black'
+      >
+        {photo.title}
+      </Text>
+      <Suspense
+        fallback={
+          <Suspense
+            fallback={
+              <Suspense fallback={<LoadingImage size={scale} position={position} />}>
+                <DreiImage transparent position={position} scale={scale} url={photo.small.url} />
+              </Suspense>
+            }
+          >
+            <DreiImage ref={ref} transparent position={position} scale={scale} url={photo.medium.url} />
+          </Suspense>
+        }
+      >
+        <DreiImage ref={ref} transparent position={position} scale={scale} url={photo.large.url} />
+      </Suspense>
+    </>
   )
 }

@@ -1,9 +1,9 @@
 export default async function Page() {
   return (
-    <div className='text-body mt-auto gap-20 pb-24'>
+    <div className='text-body mt-auto gap-20 pb-8 md:pb-24'>
       <h1 className='text-h1 mb-12 font-display'>Lubbock Photos</h1>
 
-      <div className='flex gap-12'>
+      <div className='flex flex-wrap gap-12'>
         <article className='max-w-md'>
           <h2 className='font-bold'>About</h2>
           <p className='mt-2'>Lubbock is an amateur black and white street photographer based in Bordeaux.</p>

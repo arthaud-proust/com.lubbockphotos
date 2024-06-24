@@ -25,8 +25,8 @@ const Layout = ({ children, isBgDark }: PropsWithChildren<{ isBgDark: boolean }>
         'relative size-full touch-auto overflow-auto ' + (isBgDark ? 'bg-black text-white' : 'bg-white text-black')
       }
     >
-      <main className='flex min-h-screen items-start gap-4 px-4 pt-8 md:gap-8 md:px-8'>
-        <nav className='text-body sticky top-8 z-50 w-24 shrink-0'>
+      <main className='relative flex min-h-screen items-start gap-4 px-4 pl-32 pt-8 md:gap-8 md:px-8 md:pl-40'>
+        <nav className='text-body fixed bottom-8 left-4 z-50 flex w-24 shrink-0 flex-col md:left-8 md:top-8'>
           {links.map((link, index) => (
             <Link
               key={index}

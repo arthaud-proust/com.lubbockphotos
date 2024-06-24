@@ -1,6 +1,6 @@
 import { Layout } from '@/components/Layout'
+import { seo } from '@/core/seo'
 import '@/global.css'
-import { seo } from '@/seo'
 
 export const metadata = {
   title: seo.title,

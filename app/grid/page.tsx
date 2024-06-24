@@ -1,5 +1,5 @@
 import { getPhotos } from '@/clients/flickr/client'
-import { PhotoGallery } from '@/components/PhotoGallery'
+import { PhotoGrid } from '@/components/PhotoGrid'
 import 'photoswipe/dist/photoswipe.css'
 
 export default async function Page() {
@@ -7,7 +7,7 @@ export default async function Page() {
 
   return (
     <main className='space-y-20 py-[30vh] pr-4 md:pr-8'>
-      <PhotoGallery photos={photos} />
+      <PhotoGrid photos={photos} />
     </main>
   )
 }

@@ -18,7 +18,7 @@ const Layout = ({ children }) => {
   ]
 
   return (
-    <div ref={ref} className='relative size-full touch-auto overflow-auto'>
+    <div id='layout' ref={ref} className='relative size-full touch-auto overflow-auto'>
       <main className='flex min-h-screen items-start gap-4 px-4 pt-8 md:gap-8 md:px-8'>
         <nav className='text-body sticky top-8 z-50 w-24 shrink-0'>
           {links.map((link, index) => (

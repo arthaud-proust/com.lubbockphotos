@@ -1,4 +1,4 @@
-import { seo } from '@/seo'
+import { seo } from '@/core/seo'
 
 export default function Head() {
   const { title, description, author, url } = seo

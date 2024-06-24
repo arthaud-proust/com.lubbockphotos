@@ -1,5 +1,7 @@
 'use client'
+import tick from '@/audio/tick.mp3'
 import { Photo, PhotoSet } from '@/core/types'
+import { useThrottled } from '@/helpers/throttle'
 import {
   Billboard,
   BillboardProps,
@@ -14,6 +16,7 @@ import { easing, geometry } from 'maath'
 import { PropsWithChildren, Suspense, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { suspend } from 'suspend-react'
 import * as THREE from 'three'
+import useSound from 'use-sound'
 
 extend(geometry)
 const inter = import('@pmndrs/assets/fonts/inter_regular.woff') as any
@@ -70,24 +73,33 @@ function Scene({
   ...props
 }: PropsWithChildren<{ carouselGroups: Array<CarouselGroup> } & GroupProps>) {
   const ref = useRef<THREE.Group<THREE.Object3DEventMap>>()
-  const [isActiveHovered, setIsActiveHovered] = useState(false)
+  const [isBigDisplay, setIsBigDisplay] = useState(false)
 
   const radius = 15
 
   const scroll = useScroll()
-  const [activePhoto, setActivePhoto] = useState<Photo | null>(null)
+  const [activePhoto, setActivePhoto] = useState<Photo | null>(carouselGroups[0].photoSet.photos[0])
   const [hoveredPhoto, setHoveredPhoto] = useState<Photo | null>(null)
   const raycaster = useMemo(
     () => new THREE.Raycaster(new THREE.Vector3(0, 1, radius * 0.25), new THREE.Vector3(0, 0, 1).normalize()),
     [radius],
   )
+  const [playTick] = useSound(tick)
+  const playTickThrottled = useThrottled(playTick, 50)
+
+  const switchDisplay = () => setIsBigDisplay(!isBigDisplay)
 
   useFrame((state, delta) => {
     if (ref.current) ref.current.rotation.y = -scroll.offset * (Math.PI * 2) // Rotate contents
     state.events.update() // Raycasts every frame rather than on pointer-move
     easing.damp3(state.camera.position, [-state.pointer.x * 2, state.pointer.y * 1.5 + 5.5, 11.5], 0.3, delta)
     state.camera.lookAt(0, 1, 0)
-    setActivePhoto(hoveredPhoto ?? raycaster.intersectObject(ref.current)[0]?.object.userData.photo ?? null)
+
+    const newActivePhoto = hoveredPhoto ?? raycaster.intersectObject(ref.current)[0]?.object.userData.photo ?? null
+    if (newActivePhoto && newActivePhoto.id !== activePhoto?.id) {
+      setActivePhoto(newActivePhoto)
+      playTickThrottled()
+    }
   })
 
   return (
@@ -100,15 +112,11 @@ function Scene({
           len={carouselGroup.len}
           radius={radius}
           photos={carouselGroup.photoSet.photos}
-          isActiveHovered={isActiveHovered}
+          isActiveHovered={isBigDisplay}
           onHoverCard={(photo: Photo | null) => setHoveredPhoto(photo)}
         />
       ))}
-      <ActiveCard
-        photo={activePhoto}
-        isHovered={isActiveHovered}
-        onClick={() => setIsActiveHovered(!isActiveHovered)}
-      />
+      <ActiveCard photo={activePhoto} isHovered={isBigDisplay} onClick={switchDisplay} />
     </group>
   )
 }

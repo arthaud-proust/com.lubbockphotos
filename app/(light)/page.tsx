@@ -1,7 +1,7 @@
 export default async function Page() {
   return (
     <div className='text-body mt-auto gap-20 pb-24'>
-      <h1 className='text-h1 mb-12 font-display'>Lubbock Gallery</h1>
+      <h1 className='text-h1 mb-12 font-display'>Lubbock Photos</h1>
 
       <div className='flex gap-12'>
         <article className='max-w-md'>
@@ -15,7 +15,7 @@ export default async function Page() {
         </article>
 
         <article className='max-w-md'>
-          <h2 className='font-bold'>Contact</h2>
+          <h2 className='font-bold'>Networks</h2>
           <nav className='mt-2 flex gap-2'>
             <a className='hover:underline' href='https://500px.com/p/lubbock?view=photos'>
               500px

@@ -6,15 +6,20 @@ import { usePathname } from 'next/navigation'
 import { PropsWithChildren, useRef } from 'react'
 const Scene = dynamic(() => import('@/components/canvas/Scene'), { ssr: false })
 
+type Link = { label: string; href: string; onMobile: boolean }
+const isRoot = (url: string) => url === '/'
+const isLinkActive = (link: Link, currentPathname: string) =>
+  isRoot(link.href) ? currentPathname === link.href : currentPathname.startsWith(link.href)
+
 const Layout = ({ children, isBgDark }: PropsWithChildren<{ isBgDark: boolean }>) => {
   const ref = useRef()
   const pathname = usePathname()
 
-  const links: Array<{ label: string; href: string }> = [
-    { label: 'Lubbock', href: '/' },
-    { label: 'Carousel', href: '/carousel' },
-    { label: 'Gallery', href: '/gallery' },
-    { label: 'Grid', href: '/grid' },
+  const links: Array<Link> = [
+    { label: 'Lubbock', href: '/', onMobile: true },
+    { label: 'Carousel', href: '/carousel', onMobile: false },
+    { label: 'Gallery', href: '/gallery', onMobile: true },
+    { label: 'Grid', href: '/grid', onMobile: true },
   ]
 
   return (
@@ -30,8 +35,10 @@ const Layout = ({ children, isBgDark }: PropsWithChildren<{ isBgDark: boolean }>
           {links.map((link, index) => (
             <Link
               key={index}
-              aria-disabled={link.href === '/' ? pathname === link.href : pathname.startsWith(link.href)}
-              className='group flex items-center underline-offset-2 hover:underline'
+              aria-disabled={isLinkActive(link, pathname)}
+              className={
+                'group flex items-center underline-offset-2 hover:underline ' + (!link.onMobile ? 'max-md:hidden' : '')
+              }
               href={link.href}
             >
               <span

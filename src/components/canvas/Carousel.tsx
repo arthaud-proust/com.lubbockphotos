@@ -1,6 +1,6 @@
 'use client'
 import tick from '@/audio/tick.mp3'
-import { Photo, PhotoSet } from '@/core/types'
+import { bestSizeAvailable, Photo, PhotoSet } from '@/core/photo'
 import { useThrottled } from '@/helpers/throttle'
 import {
   Billboard,
@@ -11,7 +11,7 @@ import {
   Text,
   useScroll,
 } from '@react-three/drei'
-import { Canvas, GroupProps, extend, useFrame } from '@react-three/fiber'
+import { Canvas, extend, GroupProps, useFrame } from '@react-three/fiber'
 import { easing, geometry } from 'maath'
 import { PropsWithChildren, Suspense, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
@@ -263,6 +263,8 @@ function ActiveCardImage({ photo, isHovered }: { photo: Photo | undefined; isHov
     easing.damp(ref.current.material, 'opacity', photo ? 1 : 0, delta)
   })
 
+  const photoSize = bestSizeAvailable(photo, 'large')
+
   return (
     <>
       <Text
@@ -276,18 +278,12 @@ function ActiveCardImage({ photo, isHovered }: { photo: Photo | undefined; isHov
       </Text>
       <Suspense
         fallback={
-          <Suspense
-            fallback={
-              <Suspense fallback={<LoadingImage size={scale} position={position} />}>
-                <DreiImage transparent position={position} scale={scale} url={photo.small.url} />
-              </Suspense>
-            }
-          >
-            <DreiImage ref={ref} transparent position={position} scale={scale} url={photo.medium.url} />
+          <Suspense fallback={<LoadingImage size={scale} position={position} />}>
+            <DreiImage transparent position={position} scale={scale} url={photo.small.url} />
           </Suspense>
         }
       >
-        <DreiImage ref={ref} transparent position={position} scale={scale} url={photo.large.url} />
+        <DreiImage ref={ref} transparent position={position} scale={scale} url={photoSize.url} />
       </Suspense>
     </>
   )

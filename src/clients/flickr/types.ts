@@ -17,6 +17,9 @@ export type FlickrPhoto = {
   url_l: string
   height_l: number
   width_l: number
+  url_k: string
+  height_k: number
+  width_k: number
 }
 
 export type FlickrPhotoSet = {

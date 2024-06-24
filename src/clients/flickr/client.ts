@@ -1,9 +1,10 @@
-import { Photo, PhotoSet } from '@/core/types'
+import { Photo, PhotoSet } from '@/core/photo'
 import { createFlickr } from 'flickr-sdk'
 import { toPhoto, toPhotoSet } from './converters'
 import { FlickrPhoto, FlickrPhotoSet } from './types'
 
 const { flickr } = createFlickr('97818967026878ef662304c74417044c')
+const PHOTOS_EXTRAS = 'url_s, url_z, url_l, url_k'
 
 const getPhotos = async ({ count = 500 }: { count?: number }): Promise<Array<Photo>> => {
   const flickrPhotos = (
@@ -11,7 +12,7 @@ const getPhotos = async ({ count = 500 }: { count?: number }): Promise<Array<Pho
       user_id: process.env.FLICKR_USER_ID,
       content_types: '0',
       privacy_filter: '1',
-      extras: 'url_s, url_z, url_l',
+      extras: PHOTOS_EXTRAS,
       per_page: `${count}`,
     })
   ).photos.photo as Array<FlickrPhoto>
@@ -31,11 +32,13 @@ const getPhotoSetPhotos = async ({
       user_id: process.env.FLICKR_USER_ID,
       photoset_id: photoSetId,
       privacy_filter: '1',
-      extras: 'url_s, url_z, url_l',
+      extras: PHOTOS_EXTRAS,
       per_page: `${count}`,
       media: 'photos',
     })
   ).photoset.photo as Array<FlickrPhoto>
+
+  console.log(flickrPhotos.find((photo) => photo.id === '34402459533'))
 
   return flickrPhotos.map(toPhoto)
 }

@@ -1,5 +1,5 @@
 'use client'
-import { Photo, PhotoSet } from '@/core/types'
+import { bestSizeAvailable, Photo, PhotoSet } from '@/core/photo'
 import { motion, MotionValue, useScroll, useTransform } from 'framer-motion'
 import Image from 'next/image'
 import { MutableRefObject, useRef } from 'react'
@@ -22,15 +22,17 @@ function SizeChangingPhoto({ container, photo }: { container: MutableRefObject<H
   })
   const scale = useImageScaling(scrollYProgress)
 
+  const photoSize = bestSizeAvailable(photo)
+
   return (
     <div ref={target} className='z-50  h-screen w-full'>
       <motion.div style={{ scale }}>
         <Image
           className='h-screen w-full object-contain object-center'
           alt=''
-          src={photo.large.url}
-          height={photo.large.height}
-          width={photo.large.width}
+          src={photoSize.url}
+          height={photoSize.height}
+          width={photoSize.width}
         />
       </motion.div>
     </div>
@@ -47,6 +49,8 @@ function OpacityChangingPhoto({ container, photo }: { container: MutableRefObjec
   })
   const opacity = useImageOpacity(scrollYProgress)
 
+  const photoSize = bestSizeAvailable(photo)
+
   return (
     <div ref={target} className='relative h-screen w-full'>
       <div className='pointer-events-none absolute top-[-100vh] h-[300vh] w-full'>
@@ -55,9 +59,9 @@ function OpacityChangingPhoto({ container, photo }: { container: MutableRefObjec
             <Image
               className='h-screen w-full object-contain object-center'
               alt=''
-              src={photo.large.url}
-              height={photo.large.height}
-              width={photo.large.width}
+              src={photoSize.url}
+              height={photoSize.height}
+              width={photoSize.width}
             />
           </motion.div>
         </div>

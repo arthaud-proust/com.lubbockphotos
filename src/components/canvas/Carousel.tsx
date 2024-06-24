@@ -14,12 +14,11 @@ import {
 import { Canvas, GroupProps, extend, useFrame } from '@react-three/fiber'
 import { easing, geometry } from 'maath'
 import { PropsWithChildren, Suspense, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { suspend } from 'suspend-react'
 import * as THREE from 'three'
 import useSound from 'use-sound'
 
 extend(geometry)
-const inter = import('@pmndrs/assets/fonts/inter_regular.woff') as any
+const geomanistRegularUrl = '/fonts/geomanist/Geomanist-Regular.woff'
 
 type CarouselGroup = {
   photoSet: PhotoSet
@@ -150,7 +149,7 @@ function Cards({
       <Billboard
         position={[Math.sin(textAngle) * radius * textDistance, -0.5, Math.cos(textAngle) * radius * textDistance]}
       >
-        <Text font={(suspend(inter) as any).light} fontSize={0.13} anchorX='center' color='black'>
+        <Text font={geomanistRegularUrl} fontSize={0.13} anchorX='center' color='black'>
           {category}
         </Text>
       </Billboard>
@@ -267,7 +266,7 @@ function ActiveCardImage({ photo, isHovered }: { photo: Photo | undefined; isHov
   return (
     <>
       <Text
-        font={(suspend(inter) as any).default}
+        font={geomanistRegularUrl}
         fontSize={0.5}
         position={[scale[0] / 2 + position[0] + 1, scale[1] / 2 + position[1] - 1, 0]}
         anchorX='left'

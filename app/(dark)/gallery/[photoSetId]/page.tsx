@@ -9,7 +9,7 @@ export default async function Page({ params }: { params: { photoSetId: string } 
   return (
     <main className='relative grow space-y-20 pr-4  md:pr-8'>
       <div className='flex h-screen w-full items-center justify-center'>
-        <h1 className='text-h1'>{photoSet.title}</h1>
+        <h1 className='text-h1 font-display'>{photoSet.title}</h1>
       </div>
       <PhotoGallery photoSet={photoSet} />
     </main>

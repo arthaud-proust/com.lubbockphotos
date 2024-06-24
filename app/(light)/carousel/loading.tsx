@@ -1,3 +1,5 @@
+import LoadingProgress from '@/components/LoadingProgress'
+
 export default function Loading() {
-  return <span>Loading data from Flickr...</span>
+  return <LoadingProgress />
 }

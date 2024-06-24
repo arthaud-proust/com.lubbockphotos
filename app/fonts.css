@@ -1,0 +1,41 @@
+@font-face {
+  font-family: 'Manuscribe';
+  src:
+    local('Manuscribe Regular'),
+    local('Manuscribe-Regular'),
+    url('/fonts/manuscribe/Manuscribe-Regular.otf') format('opentype'),
+    url('/fonts/manuscribe/Manuscribe-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geomanist';
+  src: url('/fonts/geomanist/Geomanist-Bold.eot');
+  src:
+    local('Geomanist Bold'),
+    local('Geomanist-Bold'),
+    url('/fonts/geomanist/Geomanist-Bold.eot?#iefix') format('embedded-opentype'),
+    url('/fonts/geomanist/Geomanist-Bold.woff2') format('woff2'),
+    url('/fonts/geomanist/Geomanist-Bold.woff') format('woff'),
+    url('/fonts/geomanist/Geomanist-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geomanist';
+  src: url('/fonts/geomanist/Geomanist-Regular.eot');
+  src:
+    local('Geomanist Regular'),
+    local('Geomanist-Regular'),
+    url('/fonts/geomanist/Geomanist-Regular.eot?#iefix') format('embedded-opentype'),
+    url('/fonts/geomanist/Geomanist-Regular.woff2') format('woff2'),
+    url('/fonts/geomanist/Geomanist-Regular.woff') format('woff'),
+    url('/fonts/geomanist/Geomanist-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}

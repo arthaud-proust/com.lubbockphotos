@@ -4,6 +4,7 @@ import { toPhoto, toPhotoSet } from './converters'
 import { FlickrPhoto, FlickrPhotoSet } from './types'
 
 const { flickr } = createFlickr('97818967026878ef662304c74417044c')
+const { flickr } = createFlickr(process.env.FLICKR_API_KEY, transport)
 const PHOTOS_EXTRAS = 'url_s, url_z, url_l, url_k'
 
 const getPhotos = async ({ count = 500 }: { count?: number }): Promise<Array<Photo>> => {

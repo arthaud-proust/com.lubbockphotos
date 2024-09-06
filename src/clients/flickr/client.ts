@@ -3,10 +3,10 @@ import { createFlickr, FetchTransport } from 'flickr-sdk'
 import { toPhoto, toPhotoSet } from './converters'
 import { FlickrPhoto, FlickrPhotoSet } from './types'
 
-const ONE_HOUR = 3600
+const ONE_DAY = 24 * 3600
 const transport = new FetchTransport({
   next: {
-    revalidate: ONE_HOUR,
+    revalidate: ONE_DAY,
   },
 })
 const { flickr } = createFlickr(process.env.FLICKR_API_KEY, transport)

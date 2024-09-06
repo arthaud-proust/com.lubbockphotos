@@ -31,7 +31,7 @@ const Layout = ({ children, isBgDark }: PropsWithChildren<{ isBgDark: boolean }>
       }
     >
       <main className='relative flex min-h-svh items-start gap-4 px-4 pt-8 md:gap-8 md:px-8'>
-        <nav className='text-body sticky top-8 flex w-24 shrink-0 flex-col'>
+        <nav className='text-body sticky top-8 z-50 flex w-24 shrink-0 flex-col'>
           {links.map((link, index) => (
             <Link
               key={index}

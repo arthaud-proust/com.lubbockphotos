@@ -5,11 +5,11 @@ import Image from 'next/image'
 import { MutableRefObject, useRef } from 'react'
 
 function useImageScaling(value: MotionValue<number>) {
-  return useTransform(value, [0, 0.5, 1], [0, 1, 0])
+  return useTransform(value, [0, 0.49, 0.51, 1], [0, 1, 1, 0])
 }
 
 function useImageOpacity(value: MotionValue<number>) {
-  return useTransform(value, [0, 0.5, 1], [0, 1, 0])
+  return useTransform(value, [0, 0.4, 0.6, 1], [0, 1, 1, 0])
 }
 
 function SizeChangingPhoto({ container, photo }: { container: MutableRefObject<HTMLElement>; photo: Photo }) {

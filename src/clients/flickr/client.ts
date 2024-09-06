@@ -38,8 +38,6 @@ const getPhotoSetPhotos = async ({
     })
   ).photoset.photo as Array<FlickrPhoto>
 
-  console.log(flickrPhotos.find((photo) => photo.id === '34402459533'))
-
   return flickrPhotos.map(toPhoto)
 }
 

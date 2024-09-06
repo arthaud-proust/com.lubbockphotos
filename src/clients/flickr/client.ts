@@ -1,9 +1,14 @@
 import { Photo, PhotoSet } from '@/core/photo'
-import { createFlickr } from 'flickr-sdk'
+import { createFlickr, FetchTransport } from 'flickr-sdk'
 import { toPhoto, toPhotoSet } from './converters'
 import { FlickrPhoto, FlickrPhotoSet } from './types'
 
-const { flickr } = createFlickr('97818967026878ef662304c74417044c')
+const ONE_HOUR = 3600
+const transport = new FetchTransport({
+  next: {
+    revalidate: ONE_HOUR,
+  },
+})
 const { flickr } = createFlickr(process.env.FLICKR_API_KEY, transport)
 const PHOTOS_EXTRAS = 'url_s, url_z, url_l, url_k'
 

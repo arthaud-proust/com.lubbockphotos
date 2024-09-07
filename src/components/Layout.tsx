@@ -35,20 +35,18 @@ const Layout = ({ children, isBgDark }: PropsWithChildren<{ isBgDark: boolean }>
           {links.map((link, index) => (
             <Link
               key={index}
-              aria-disabled={isLinkActive(link, pathname)}
-              className={
-                'group flex items-center underline-offset-2 hover:underline ' + (!link.onMobile ? 'max-md:hidden' : '')
-              }
+              aria-current={isLinkActive(link, pathname) ? 'page' : false}
+              className={'group flex items-center ' + (!link.onMobile ? 'max-md:hidden' : '')}
               href={link.href}
             >
               <span
                 className={
-                  'block h-px w-0 transition-all duration-100 group-aria-disabled:w-5 ' +
+                  'block h-px w-0 transition-all duration-100 group-aria-current-page:w-5 ' +
                   (isBgDark ? 'bg-white' : 'bg-black')
                 }
               ></span>
-              <span className='block h-px w-0 transition-all duration-100 group-aria-disabled:w-2'></span>
-              {link.label}
+              <span className='block h-px w-0 transition-all duration-100 group-aria-current-page:w-2'></span>
+              <span className={isLinkActive(link, pathname) ? '' : 'link'}>{link.label}</span>
             </Link>
           ))}
         </nav>

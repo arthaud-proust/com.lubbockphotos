@@ -32,13 +32,13 @@ export default async function Page() {
         <article className='max-w-md'>
           <h2 className='font-bold'>Networks</h2>
           <nav className='mt-2 flex gap-2'>
-            <a className='hover:underline' href='https://500px.com/p/lubbock?view=photos'>
+            <a className='link' href='https://500px.com/p/lubbock?view=photos'>
               500px
             </a>
-            <a className='hover:underline' href='https://www.flickr.com/photos/lubbockphotos/'>
+            <a className='link' href='https://www.flickr.com/photos/lubbockphotos/'>
               Flickr
             </a>
-            <a className='hover:underline' href='https://instagram.com/lubbock_photos/'>
+            <a className='link' href='https://instagram.com/lubbock_photos/'>
               Instagram
             </a>
           </nav>

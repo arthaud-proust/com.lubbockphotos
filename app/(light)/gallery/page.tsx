@@ -18,9 +18,9 @@ export default async function Page() {
           />
           <Link
             href={`/gallery/${photoSet.id}`}
-            className='mt-2 block w-full truncate text-center after:absolute after:inset-0'
+            className='group mt-2 block w-full truncate text-center before:absolute before:inset-0'
           >
-            {photoSet.title}
+            <span className='link'>{photoSet.title}</span>
           </Link>
         </div>
       ))}

@@ -29,4 +29,16 @@
   .text-body {
     font-size: clamp(1rem, 0.5vw, 3rem);
   }
+
+  .link {
+    @apply relative;
+  }
+  .link::after {
+    content: '';
+    @apply absolute right-0 bottom-0 h-px w-0 bg-black transition-all duration-300;
+  }
+  .link:hover::after,
+  .group:hover .link::after {
+    @apply w-full right-auto left-0;
+  }
 }

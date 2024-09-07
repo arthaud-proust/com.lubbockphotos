@@ -10,6 +10,9 @@ module.exports = {
         sans: ['Geomanist', ...defaultTheme.fontFamily.sans],
         display: ['Manuscribe', ...defaultTheme.fontFamily.sans],
       },
+      aria: {
+        'current-page': 'current="page"',
+      },
     },
   },
   variants: {

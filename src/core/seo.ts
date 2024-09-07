@@ -1,6 +1,7 @@
 export const seo = {
   title: 'Lubbock Photographer',
-  url: 'https://react-three-next.vercel.app/',
-  description: 'Lubbock is a street black and white photographer based in Bordeaux.',
+  url: 'https://lubbockphotos.com',
+  description:
+    'Lubbock is an amateur black and white street photographer based in Bordeaux. Photography has been his passion since 1998.',
   author: 'Arthaud Proust',
 }

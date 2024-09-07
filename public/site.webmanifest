@@ -1,0 +1,21 @@
+{
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "icons": [
+        {
+            "sizes": "192x192",
+            "src": "/icons/android-chrome-192x192.png",
+            "type": "image/png"
+        },
+        {
+            "sizes": "256x256",
+            "src": "/icons/android-chrome-256x256.png",
+            "type": "image/png"
+        }
+    ],
+    "name": "Lubbock Photos",
+    "scope": "/",
+    "short_name": "Lubbock Photos",
+    "start_url": "/",
+    "theme_color": "#000000"
+}

@@ -24,7 +24,7 @@ export default function Head() {
       <meta property='og:title' content={title} />
       <meta property='og:type' content='site' />
       <meta property='og:url' content={url} />
-      <meta property='og:image' content={'/icons/share.png'} />
+      <meta property='og:image' content={'/icons/android-chrome-256x256.ong'} />
       <meta property='og:site_name' content={title} />
       <meta property='og:description' content={description} />
 

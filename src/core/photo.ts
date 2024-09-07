@@ -16,6 +16,7 @@ export type Photo = {
 export type PhotoSet = {
   id: string
   title: string
+  photoCount: number
   photos: Array<Photo>
 }
 

@@ -42,5 +42,6 @@ export const toPhoto = (flickrPhoto: FlickrPhoto): Photo => {
 export const toPhotoSet = (flickrPhotoSet: FlickrPhotoSet): PhotoSet => ({
   id: flickrPhotoSet.id,
   title: flickrPhotoSet.title._content,
+  photoCount: flickrPhotoSet.count_photos,
   photos: [],
 })

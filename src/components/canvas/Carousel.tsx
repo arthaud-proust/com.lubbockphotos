@@ -84,14 +84,14 @@ function Scene({
     [radius],
   )
   const [playTick] = useSound(tick)
-  const playTickThrottled = useThrottled(playTick, 50)
+  const playTickThrottled = useThrottled(playTick, 100)
 
   const switchDisplay = () => setIsBigDisplay(!isBigDisplay)
 
   useFrame((state, delta) => {
     if (ref.current) ref.current.rotation.y = -scroll.offset * (Math.PI * 2) // Rotate contents
     state.events.update() // Raycasts every frame rather than on pointer-move
-    easing.damp3(state.camera.position, [-state.pointer.x * 2, state.pointer.y * 1.5 + 5.5, 11.5], 0.3, delta)
+    easing.damp3(state.camera.position, [state.pointer.x * 2, state.pointer.y * 1.5 + 5.5, 11.5], 0.3, delta)
     state.camera.lookAt(0, 1, 0)
 
     const newActivePhoto = hoveredPhoto ?? raycaster.intersectObject(ref.current)[0]?.object.userData.photo ?? null

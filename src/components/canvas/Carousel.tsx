@@ -1,7 +1,6 @@
 'use client'
 import tick from '@/audio/tick.mp3'
 import { bestSizeAvailable, Photo, PhotoSet } from '@/core/photo'
-import { useThrottled } from '@/helpers/throttle'
 import {
   Billboard,
   BillboardProps,
@@ -13,7 +12,7 @@ import {
 } from '@react-three/drei'
 import { Canvas, extend, GroupProps, useFrame } from '@react-three/fiber'
 import { easing, geometry } from 'maath'
-import { PropsWithChildren, Suspense, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import useSound from 'use-sound'
 
@@ -26,150 +25,116 @@ type CarouselGroup = {
   len: number
 }
 
+type PhotoSetInfos = Omit<PhotoSet, 'photos'>
+
+type Slot = {
+  angle: number
+  photo?: Photo
+  photoSetInfos?: PhotoSetInfos
+}
+
 export const Carousel = ({ photoSets }: { photoSets: Array<PhotoSet> }) => {
-  const gapBetweenGroups = 1
+  const photoCount = photoSets.reduce((total, photoSet) => total + photoSet.photos.length, 0)
+  const gapCount = photoSets.length // one gap before each photoSet
+  const slotCount = photoCount + gapCount
+  const baseAngle = (Math.PI * 2) / slotCount
 
-  const groups = photoSets.reduce((groups: Array<{ start: number; len: number; end: number }>, set, index) => {
-    const len = set.photos.length
-    if (index === 0) {
-      const start = gapBetweenGroups
-      const end = start + len
+  const slots = [] as Array<Slot>
+  photoSets.forEach((photoSet) => {
+    photoSet.photos.forEach((photo) => {
+      slots.push({ angle: baseAngle * slots.length, photo })
+    })
 
-      return [...groups, { start, len, end }]
-    }
-
-    const lastGroup = groups[index - 1]
-    const start = lastGroup.end + gapBetweenGroups
-    const end = start + len
-
-    return [...groups, { start, len, end }]
-  }, [])
-
-  const total = groups[groups.length - 1].end
-  const pointToRadian = (point: number) => (Math.PI * 2 * point) / total
-
-  const startOfGroup = (index: number) => pointToRadian(groups[index].start)
-  const lenOfGroup = (index: number) => pointToRadian(groups[index].len)
-
-  const carouselGroups: Array<CarouselGroup> = photoSets.map((photoSet, index) => ({
-    photoSet,
-    start: startOfGroup(index),
-    len: lenOfGroup(index),
-  }))
+    slots.push({
+      angle: baseAngle * (slots.length - 2 - photoSet.photos.length / 2),
+      photoSetInfos: {
+        id: photoSet.id,
+        title: photoSet.title,
+        photoCount: photoSet.photos.length,
+      },
+    })
+  })
 
   return (
     <Canvas className='!fixed left-0 top-0' dpr={[1, 1.5]}>
       <ScrollControls horizontal pages={6} infinite>
-        <Scene position={[0, 1, -8]} carouselGroups={carouselGroups} />
+        <Scene slots={slots} baseAngle={baseAngle} position={[0, 1, -8]} />
       </ScrollControls>
     </Canvas>
   )
 }
 
-function Scene({
-  children,
-  carouselGroups,
-  ...props
-}: PropsWithChildren<{ carouselGroups: Array<CarouselGroup> } & GroupProps>) {
+function Scene({ slots, baseAngle, ...props }: { slots: Array<Slot>; baseAngle: number } & GroupProps) {
   const ref = useRef<THREE.Group<THREE.Object3DEventMap>>()
   const [isBigDisplay, setIsBigDisplay] = useState(false)
+  const toggleBigDisplay = () => setIsBigDisplay(!isBigDisplay)
 
   const radius = 15
+  const textDistance = 1.06
+
+  const [activeSlotIndex, setActiveSlotIndex] = useState<number | undefined>(0)
+  const activePhoto = (activeSlotIndex && slots[activeSlotIndex]?.photo) || undefined
+
+  const [hoveredSlotIndex, setHoveredSlotIndex] = useState<number | undefined>(undefined)
+  const hoveredPhoto = (hoveredSlotIndex && slots[hoveredSlotIndex]?.photo) || undefined
 
   const scroll = useScroll()
-  const [activePhoto, setActivePhoto] = useState<Photo | null>(carouselGroups[0].photoSet.photos[0])
-  const [hoveredPhoto, setHoveredPhoto] = useState<Photo | null>(null)
-  const raycaster = useMemo(
-    () => new THREE.Raycaster(new THREE.Vector3(0, 1, radius * 0.25), new THREE.Vector3(0, 0, 1).normalize()),
-    [radius],
-  )
-  const [playTick] = useSound(tick)
-  const playTickThrottled = useThrottled(playTick, 100)
 
-  const switchDisplay = () => setIsBigDisplay(!isBigDisplay)
+  const [playTick] = useSound(tick)
 
   useFrame((state, delta) => {
-    if (ref.current) ref.current.rotation.y = -scroll.offset * (Math.PI * 2) // Rotate contents
+    if (ref.current) ref.current.rotation.y = Math.PI * 2 * (1 - scroll.offset) // Rotate contents
+
     state.events.update() // Raycasts every frame rather than on pointer-move
     easing.damp3(state.camera.position, [state.pointer.x * 2, state.pointer.y * 1.5 + 5.5, 11.5], 0.3, delta)
     state.camera.lookAt(0, 1, 0)
 
-    const newActivePhoto = hoveredPhoto ?? raycaster.intersectObject(ref.current)[0]?.object.userData.photo ?? null
-    if (newActivePhoto && newActivePhoto.id !== activePhoto?.id) {
-      setActivePhoto(newActivePhoto)
-      playTickThrottled()
+    // get photo by rotation.y
+    const slotIndex = Math.round(ref.current.rotation.y / baseAngle)
+
+    const photo = slots[slotIndex]?.photo
+    const newActiveSlotIndex = photo ? slotIndex : hoveredSlotIndex
+
+    if (newActiveSlotIndex && newActiveSlotIndex !== activeSlotIndex) {
+      setActiveSlotIndex(newActiveSlotIndex)
     }
   })
 
-  return (
-    <group ref={ref} {...props}>
-      {carouselGroups.map((carouselGroup) => (
-        <Cards
-          key={carouselGroup.photoSet.id}
-          category={carouselGroup.photoSet.title}
-          from={carouselGroup.start}
-          len={carouselGroup.len}
-          radius={radius}
-          photos={carouselGroup.photoSet.photos}
-          isActiveHovered={isBigDisplay}
-          onHoverCard={(photo: Photo | null) => setHoveredPhoto(photo)}
-        />
-      ))}
-      <ActiveCard photo={activePhoto} isHovered={isBigDisplay} onClick={switchDisplay} />
-    </group>
-  )
-}
-
-function Cards({
-  photos,
-  category,
-  from,
-  len,
-  radius,
-  isActiveHovered,
-  onHoverCard,
-  ...props
-}: {
-  photos: Array<Photo>
-  category?: string
-  from: number
-  len: number
-  radius: number
-  isActiveHovered: boolean
-  onHoverCard: (index: Photo | null) => void
-} & GroupProps) {
-  const [hovered, hover] = useState(null)
-  const amount = photos.length
-  const anglePerPhoto = len / amount
-  const textAngle = from + 0.5 * len
-  const textDistance = 1.06
+  useEffect(() => {
+    playTick()
+  }, [activeSlotIndex, playTick])
 
   return (
-    <group {...props}>
-      <Billboard
-        position={[Math.sin(textAngle) * radius * textDistance, -0.5, Math.cos(textAngle) * radius * textDistance]}
-      >
-        <Text font={geomanistRegularUrl} fontSize={0.13} anchorX='center' color='black'>
-          {category}
-        </Text>
-      </Billboard>
-
-      {photos.map((photo, i) => {
-        const angle = from + anglePerPhoto * i
-        return (
-          <Card
-            key={angle}
-            onPointerOver={(e: any) => (e.stopPropagation(), hover(i), onHoverCard(photo))}
-            onPointerOut={() => (hover(null), onHoverCard(null))}
-            position={[Math.sin(angle) * radius, 0, Math.cos(angle) * radius]}
-            rotation={[0, Math.PI / 2 + angle, 0]}
-            active={hovered !== null}
-            hovered={hovered === i}
-            isActiveHovered={isActiveHovered}
-            photo={photo}
-          />
-        )
+    <group {...props} ref={ref} position={[0, 1, -8]}>
+      {slots.map(({ angle, photo, photoSetInfos }, index) => {
+        if (photoSetInfos) {
+          return (
+            <Billboard
+              key={photoSetInfos.id}
+              position={[Math.sin(-angle) * radius * textDistance, -0.5, Math.cos(-angle) * radius * textDistance]}
+            >
+              <Text font={geomanistRegularUrl} fontSize={0.13} anchorX='center' color='black'>
+                {photoSetInfos.title} ({photoSetInfos.photoCount})
+              </Text>
+            </Billboard>
+          )
+        } else {
+          return (
+            <Card
+              key={photo.id}
+              onPointerOver={(e: any) => (e.stopPropagation(), setHoveredSlotIndex(index))}
+              onPointerOut={() => setHoveredSlotIndex(undefined)}
+              position={[Math.sin(-angle) * radius, 0, Math.cos(-angle) * radius]}
+              rotation={[0, Math.PI / 2 - angle, 0]}
+              active={activeSlotIndex === index}
+              hovered={hoveredSlotIndex === index}
+              isActiveHovered={false}
+              photo={photo}
+            />
+          )
+        }
       })}
+      <ActiveCard photo={activePhoto} isHovered={isBigDisplay} onClick={toggleBigDisplay} />
     </group>
   )
 }
